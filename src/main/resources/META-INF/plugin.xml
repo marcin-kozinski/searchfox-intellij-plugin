@@ -1,15 +1,17 @@
 <!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>com.github.marcinkozinski.searchfoxintellijplugin</id>
-    <name>searchfox-intellij-plugin</name>
-    <vendor>marcin-kozinski</vendor>
+    <id>com.github.marcinkozinski.searchfox</id>
+    <vendor>Configured by IntelliJ Platform Gradle Plugin</vendor>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>Git4Idea</depends>
 
-    <resource-bundle>messages.MyBundle</resource-bundle>
+    <resource-bundle>messages.SearchfoxBundle</resource-bundle>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.marcinkozinski.searchfoxintellijplugin.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
-        <postStartupActivity implementation="com.github.marcinkozinski.searchfoxintellijplugin.startup.MyProjectActivity" />
-    </extensions>
+    <actions>
+        <action id="com.github.marcinkozinski.searchfox.OpenInSearchfox"
+                class="com.github.marcinkozinski.searchfoxintellijplugin.actions.OpenInSearchfoxAction">
+            <add-to-group group-id="RevealGroup" anchor="last"/>
+        </action>
+    </actions>
 </idea-plugin>

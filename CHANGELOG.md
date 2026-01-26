@@ -1,7 +1,14 @@
 <!-- Keep a Changelog guide -> https://keepachangelog.com -->
 
-# searchfox-intellij-plugin Changelog
+# Searchfox IntelliJ Plugin Changelog
 
 ## [Unreleased]
+
+## [0.0.1] - 2026-01-23
+
 ### Added
-- Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
+
+- Added Searchfox as an option in the built-in Open In menu.
+
+[Unreleased]: https://github.com/marcin-kozinski/searchfox-intellij-plugin/compare/v0.0.1...HEAD
+[0.0.1]: https://github.com/marcin-kozinski/searchfox-intellij-plugin/commits/v0.0.1

@@ -11,7 +11,7 @@ plugins {
     alias(libs.plugins.kover) // Gradle Kover Plugin
 }
 
-group = providers.gradleProperty("pluginGroup").get()
+group = "com.github.marcinkozinski.searchfoxintellijplugin"
 version = providers.gradleProperty("pluginVersion").get()
 
 // Set the JVM language level used to build the project.
@@ -54,8 +54,12 @@ dependencies {
 // Configure IntelliJ Platform Gradle Plugin - read more: https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-extension.html
 intellijPlatform {
     pluginConfiguration {
-        name = providers.gradleProperty("pluginName")
+        name = "Searchfox"
         version = providers.gradleProperty("pluginVersion")
+        vendor {
+            name = "Marcin Koziński"
+            url = "https://people.mozilla.org/p/marcin/"
+        }
 
         // Extract the <!-- Plugin description --> section from README.md and provide for the plugin's manifest
         description = providers.fileContents(layout.projectDirectory.file("README.md")).asText.map {
@@ -112,7 +116,7 @@ intellijPlatform {
 // Configure Gradle Changelog Plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin
 changelog {
     groups.empty()
-    repositoryUrl = providers.gradleProperty("pluginRepositoryUrl")
+    repositoryUrl = "https://github.com/marcin-kozinski/searchfox-intellij-plugin"
 }
 
 // Configure Gradle Kover Plugin - read more: https://kotlin.github.io/kotlinx-kover/gradle-plugin/#configuration-details
