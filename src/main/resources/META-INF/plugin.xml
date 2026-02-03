@@ -13,5 +13,9 @@
                 class="com.github.marcinkozinski.searchfoxintellijplugin.actions.OpenInSearchfoxAction">
             <add-to-group group-id="RevealGroup" anchor="last"/>
         </action>
+        <action id="com.github.marcinkozinski.searchfox.CopySearchfoxUrl"
+                class="com.github.marcinkozinski.searchfoxintellijplugin.actions.CopySearchfoxUrlAction">
+            <add-to-group group-id="CopyReferencePopupGroup" anchor="last"/>
+        </action>
     </actions>
 </idea-plugin>
