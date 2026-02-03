@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Added Searchfox as an option in the built-in Copy Path/Reference popup.
+
 ## [0.0.1] - 2026-01-23
 
 ### Added
