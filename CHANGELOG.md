@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [0.0.2] - 2026-02-04
+
 ### Added
 
 - Added Searchfox as an option in the built-in Copy Path/Reference popup.
@@ -14,5 +16,6 @@
 
 - Added Searchfox as an option in the built-in Open In menu.
 
-[Unreleased]: https://github.com/marcin-kozinski/searchfox-intellij-plugin/compare/v0.0.1...HEAD
+[Unreleased]: https://github.com/marcin-kozinski/searchfox-intellij-plugin/compare/v0.0.2...HEAD
+[0.0.2]: https://github.com/marcin-kozinski/searchfox-intellij-plugin/compare/v0.0.1...v0.0.2
 [0.0.1]: https://github.com/marcin-kozinski/searchfox-intellij-plugin/commits/v0.0.1
