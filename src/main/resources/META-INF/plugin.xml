@@ -9,13 +9,16 @@
     <resource-bundle>messages.SearchfoxBundle</resource-bundle>
 
     <actions>
-        <action id="com.github.marcinkozinski.searchfox.OpenInSearchfox"
-                class="com.github.marcinkozinski.searchfoxintellijplugin.actions.OpenInSearchfoxAction">
-            <add-to-group group-id="RevealGroup" anchor="last"/>
-        </action>
-        <action id="com.github.marcinkozinski.searchfox.CopySearchfoxUrl"
-                class="com.github.marcinkozinski.searchfoxintellijplugin.actions.CopySearchfoxUrlAction">
-            <add-to-group group-id="CopyReferencePopupGroup" anchor="last"/>
-        </action>
+        <group
+            class="com.github.marcinkozinski.searchfoxintellijplugin.actions.OpenInSearchfoxActionGroup"
+            id="Searchfox.Open.In.Browser">
+            <add-to-group group-id="Git.Hosting.Open.In.Browser.Group" />
+        </group>
+
+        <group
+            class="com.github.marcinkozinski.searchfoxintellijplugin.actions.SearchfoxCopyLinkActionGroup"
+            id="Searchfox.Copy.Link">
+            <add-to-group group-id="Git.Hosting.Copy.Link.Group" />
+        </group>
     </actions>
 </idea-plugin>

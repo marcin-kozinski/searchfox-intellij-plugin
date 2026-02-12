@@ -1,102 +1,101 @@
 package com.github.marcinkozinski.searchfoxintellijplugin.actions
 
+import com.github.marcinkozinski.searchfoxintellijplugin.SearchfoxBundle
+import com.github.marcinkozinski.searchfoxintellijplugin.SearchfoxHostedRepositoriesManager
 import com.intellij.ide.BrowserUtil
-import com.intellij.openapi.actionSystem.ActionUpdateThread
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.components.service
+import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.ide.CopyPasteManager
-import git4idea.repo.GitRepository
-import git4idea.repo.GitRepositoryManager
+import com.intellij.openapi.project.Project
+import git4idea.remote.hosting.HostedGitRepositoriesManager
+import git4idea.remote.hosting.action.GlobalHostedGitRepositoryReferenceActionGroup
+import git4idea.remote.hosting.action.HostedGitRepositoryReference
 import java.awt.datatransfer.StringSelection
+import java.net.URI
 
 /**
  * Action that opens the selected file in Searchfox.
  * This action appears in the "Open In" submenu in editor, project view, and navigation bar.
  */
-class OpenInSearchfoxAction : AnAction() {
+class OpenInSearchfoxActionGroup : GlobalHostedGitRepositoryReferenceActionGroup(
+    SearchfoxBundle.messagePointer("open.in.searchfox.action"),
+    SearchfoxBundle.messagePointer("open.in.searchfox.action.description"),
+    null
+) {
 
-    override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
-
-    override fun update(e: AnActionEvent) {
-        e.presentation.isEnabledAndVisible = e.isInFirefoxRepository()
+    override fun repositoriesManager(project: Project): HostedGitRepositoriesManager<*> {
+        return project.service<SearchfoxHostedRepositoriesManager>()
     }
 
-    override fun actionPerformed(e: AnActionEvent) {
-        buildSearchfoxUrl(e)?.let { BrowserUtil.browse(it) }
-    }
-}
-
-class CopySearchfoxUrlAction : AnAction() {
-    override fun getActionUpdateThread() = ActionUpdateThread.BGT
-
-    override fun update(e: AnActionEvent) {
-        e.presentation.isEnabledAndVisible = e.isInFirefoxRepository()
+    override fun getUri(repository: URI, revisionHash: String): URI {
+        return buildSearchfoxUrl(repository, revisionHash)
     }
 
-    override fun actionPerformed(e: AnActionEvent) {
-        buildSearchfoxUrl(e)?.let {
-            CopyPasteManager.getInstance().setContents(StringSelection(it))
-        }
+    override fun getUri(
+        repository: URI,
+        revisionHash: String,
+        relativePath: String,
+        lineRange: IntRange?,
+    ): URI {
+        thisLogger().info(repository.toString())
+        return buildSearchfoxUrl(repository, relativePath, lineRange)
+    }
+
+    override fun handleReference(reference: HostedGitRepositoryReference) {
+        reference.buildWebURI()?.let { BrowserUtil.browse(it) }
     }
 }
-private fun AnActionEvent.isInFirefoxRepository(): Boolean {
-    val project = this.project ?: return false
+/**
+ * Action that copies a Searchfox link to the selected file.
+ */
+class SearchfoxCopyLinkActionGroup : GlobalHostedGitRepositoryReferenceActionGroup(
+    SearchfoxBundle.messagePointer("copy.searchfox.link.action"),
+    SearchfoxBundle.messagePointer("copy.searchfox.link.action.description"),
+    null,
+    ) {
 
-    val virtualFile = getData(CommonDataKeys.VIRTUAL_FILE)
-    val gitRepository =
-        GitRepositoryManager.getInstance(project).getRepositoryForFile(virtualFile)
-    return gitRepository != null && gitRepository.isFirefoxRepository()
-}
+    override fun repositoriesManager(project: Project): HostedGitRepositoriesManager<*> {
+        return project.service<SearchfoxHostedRepositoriesManager>()
+    }
 
-private fun buildSearchfoxUrl(e: AnActionEvent): String? {
-    val virtualFile = e.getData(CommonDataKeys.VIRTUAL_FILE) ?: return null
-    val project = e.project ?: return null
-    val gitRepository =
-        GitRepositoryManager.getInstance(project).getRepositoryForFile(virtualFile) ?: return null
+    override fun getUri(repository: URI, revisionHash: String): URI {
+        return buildSearchfoxUrl(repository, revisionHash)
+    }
 
-    val relativePath = virtualFile.path.removePrefix(gitRepository.root.path).removePrefix("/")
-    val lineFragment = buildLineFragment(e.getData(CommonDataKeys.EDITOR))
+    override fun getUri(
+        repository: URI,
+        revisionHash: String,
+        relativePath: String,
+        lineRange: IntRange?,
+    ): URI {
+        return buildSearchfoxUrl(repository, relativePath, lineRange)
+    }
 
-    // TODO: Make repository configurable
-    val repository = "firefox-main"
-    return "https://searchfox.org/$repository/source/$relativePath$lineFragment"
-}
-
-private fun buildLineFragment(editor: Editor?) = buildString {
-    if (editor != null) {
-        append("#")
-        val selectionModel = editor.selectionModel
-        val document = editor.document
-
-        if (selectionModel.hasSelection()) {
-            val startLine = document.getLineNumber(selectionModel.selectionStart)
-            append(startLine + 1)
-
-            val endLine = document.getLineNumber(selectionModel.selectionEnd)
-            if (startLine != endLine) {
-                append("-")
-                append(endLine + 1)
-            }
-        } else {
-            val currentLine = document.getLineNumber(editor.caretModel.offset)
-            append(currentLine + 1)
+    override fun handleReference(reference: HostedGitRepositoryReference) {
+        reference.buildWebURI()?.let {
+            CopyPasteManager.getInstance().setContents(StringSelection(it.toString()))
         }
     }
 }
 
-private fun GitRepository.isFirefoxRepository(): Boolean {
-    val firefoxPatterns = listOf(
-        "https://github.com/mozilla-firefox/firefox",
-        "git@github.com:mozilla-firefox/firefox",
-    )
+private fun buildSearchfoxUrl(repository: URI, revisionHash: String): URI {
+    return repository.resolve("rev/$revisionHash")
+}
 
-    return remotes.map { it.urls }
-        .flatten()
-        .any { url ->
-            firefoxPatterns.any { pattern ->
-                url.contains(pattern, ignoreCase = true)
-            }
-        }
+private fun buildSearchfoxUrl(
+    repository: URI,
+    relativePath: String,
+    lineRange: IntRange?,
+): URI {
+    val lineFragment = lineRange?.toLineFragment() ?: ""
+    return repository.resolve("source/$relativePath$lineFragment")
+}
+
+private fun IntRange.toLineFragment() = buildString {
+    append("#")
+    append(first + 1)
+    if (last != first) {
+        append("-")
+        append(last + 1)
+    }
 }
