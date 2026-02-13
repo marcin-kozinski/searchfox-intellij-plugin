@@ -8,10 +8,16 @@
 
     <resource-bundle>messages.SearchfoxBundle</resource-bundle>
 
+    <extensions defaultExtensionNs="com.intellij">
+        <postStartupActivity
+            implementation="com.github.marcinkozinski.searchfoxintellijplugin.SearchfoxStartupActivity" />
+    </extensions>
+
     <actions>
         <group
             class="com.github.marcinkozinski.searchfoxintellijplugin.actions.OpenInSearchfoxActionGroup"
             id="Searchfox.Open.In.Browser">
+            <override-text place="RevealInPopup" />
             <add-to-group group-id="Git.Hosting.Open.In.Browser.Group" />
         </group>
 

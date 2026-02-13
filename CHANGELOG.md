@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Added
+
+- Added an option to open commits/revisions in Searchfox.
+
 ## [0.0.2] - 2026-02-04
 
 ### Added

@@ -4,7 +4,6 @@ import com.github.marcinkozinski.searchfoxintellijplugin.SearchfoxBundle
 import com.github.marcinkozinski.searchfoxintellijplugin.SearchfoxHostedRepositoriesManager
 import com.intellij.ide.BrowserUtil
 import com.intellij.openapi.components.service
-import com.intellij.openapi.diagnostic.thisLogger
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.project.Project
 import git4idea.remote.hosting.HostedGitRepositoriesManager
@@ -37,7 +36,6 @@ class OpenInSearchfoxActionGroup : GlobalHostedGitRepositoryReferenceActionGroup
         relativePath: String,
         lineRange: IntRange?,
     ): URI {
-        thisLogger().info(repository.toString())
         return buildSearchfoxUrl(repository, relativePath, lineRange)
     }
 
