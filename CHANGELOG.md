@@ -7,6 +7,7 @@
 ### Added
 
 - Added an option to open commits/revisions in Searchfox.
+- Added an option to copy Searchfox link to the Copy/Paste Special menu in editor.
 
 ## [0.0.2] - 2026-02-04
 
